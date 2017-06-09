@@ -23,7 +23,7 @@ class TextBlock implements DomItem {
   String text;
 
   TextBlock(this.text, {this.id, List<String> classes}) {
-    if(classes != null && classes.length > 0) {
+    if (classes != null && classes.length > 0) {
       this.classes.addAll(classes);
     }
   }
@@ -52,7 +52,7 @@ class Div implements DomItem {
     if (child != null && child.length > 0) {
       children.addAll(child);
     }
-    if(classes != null && classes.length > 0) {
+    if (classes != null && classes.length > 0) {
       this.classes.addAll(classes);
     }
   }
@@ -91,8 +91,12 @@ class Image implements DomItem {
 
   String src;
 
-  Image(this.src, {this.id, List<String> classes}) {
-    if(classes != null && classes.length > 0) {
+  String width;
+
+  String height;
+
+  Image(this.src, {this.id, List<String> classes, this.width, this.height}) {
+    if (classes != null && classes.length > 0) {
       this.classes.addAll(classes);
     }
   }
@@ -104,6 +108,8 @@ class Image implements DomItem {
     if (classes != null && classes.length > 0)
       sb.write(' class="${classes.join(' ')}"');
     sb.write(' src="$src"');
+    if (width is String && width.isNotEmpty) sb.write(' width="$width"');
+    if (height is String && height.isNotEmpty) sb.write(' height="$height"');
     sb.write('>');
     return sb.toString();
   }
@@ -118,8 +124,13 @@ TextBlock t(String text, {String id, List<String> classes}) =>
 List<TextBlock> tIter(List<String> texts, {List<String> classes}) =>
     texts.map((String text) => t(text, classes: classes)).toList();
 
-Image i(String src, {String id, List<String> classes}) =>
-    new Image(src, id: id, classes: classes);
+Image i(String src,
+        {String id, List<String> classes, String width, String height}) =>
+    new Image(src, id: id, classes: classes, width: width, height: height);
 
-List<Image> iIter(List<String> srcs, {List<String> classes}) =>
-    srcs.map((String src) => i(src, classes: classes)).toList();
+List<Image> iIter(List<String> srcs,
+        {List<String> classes, String width, String height}) =>
+    srcs
+        .map((String src) =>
+            i(src, classes: classes, width: width, height: height))
+        .toList();
