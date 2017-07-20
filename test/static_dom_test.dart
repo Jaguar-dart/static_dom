@@ -6,14 +6,15 @@ import 'package:test/test.dart';
 
 void main() {
   group('A group of tests', () {
-    Awesome awesome;
-
-    setUp(() {
-      awesome = new Awesome();
-    });
-
     test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
+      final data = <String>['messi.jpg', 'neymar.jpg'];
+      Div div = d().forEach<String>(
+          data,
+          (String text) => d(classes: ['item'])
+            ..add(i('/data/img/$text', classes: ["item-img"]))
+            ..add(t(text, classes: ["item-txt"])));
+      expect(div.render(),
+          r'''<div><div class="item"><img class="item-img" src="/data/img/messi.jpg"><div class="item-txt">messi.jpg</div></div><div class="item"><img class="item-img" src="/data/img/neymar.jpg"><div class="item-txt">neymar.jpg</div></div></div>''');
     });
   });
 }

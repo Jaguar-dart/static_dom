@@ -5,3 +5,4 @@
 library static_dom;
 
 export 'src/dom.dart';
+export 'src/css/css.dart';

@@ -4,6 +4,11 @@
 import 'package:static_dom/static_dom.dart';
 
 main() {
-  var awesome = new Awesome();
-  print('awesome: ${awesome.isAwesome}');
+  final data = <String>['messi.jpg', 'neymar.jpg'];
+  Div div = d().forEach<String>(
+      data,
+          (String text) => d(classes: ['item'])
+        ..add(i('/data/img/$text', classes: ["item-img"]))
+        ..add(t(text, classes: ["item-txt"])));
+  print(div.render());
 }
