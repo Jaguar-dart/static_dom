@@ -1,170 +1,134 @@
 library static_dom.css;
 
-class Style {
-  Map<String, String> get items {
-    final ret = <String, String>{};
+abstract class StyleItem {
+  String get style;
 
-    ret.addAll(_styles);
+  String get value;
 
-    if(_backgroundColor is String) {
-      ret['background-color'] = _backgroundColor;
-    }
+  String render() => '$style: $value;';
+}
 
-    if(_color is String) {
-      ret['color'] = _color;
-    }
+class RawStyle extends StyleItem {
+  final String style;
 
-    if(_backgroundImage is String) {
-      ret['background-image'] = 'url($_backgroundImage)';
-    }
+  final String value;
 
-    if(_transitions.length > 0) {
-      ret['transition'] = _transitions.join(', ');
-    }
+  RawStyle(this.style, this.value);
+}
 
-    if(_width is String) {
-      ret['width'] = _width;
-    }
+RawStyle rawStyle(String style, String value) => new RawStyle(style, value);
 
-    if(_height is String) {
-      ret['height'] = _height;
-    }
+class BackgroundColor extends StyleItem {
+  final String color;
 
-    if(_backgroundRepeat is String) {
-      ret['background-repeat'] = _backgroundRepeat;
-    }
+  BackgroundColor(this.color);
 
-    if(_backgroundPosition is String) {
-      ret['background-position'] = _backgroundPosition;
-    }
+  factory BackgroundColor.rgb(int r, int g, int b) =>
+      new BackgroundColor('rgb($r, $g, $b)');
 
+  factory BackgroundColor.rgba(int r, int g, int b, num a) =>
+      new BackgroundColor('rgba($r, $g, $b, $a)');
+
+  String get style => 'background-color';
+
+  String get value => color;
+}
+
+BackgroundColor backgroundColor(String color) => new BackgroundColor(color);
+
+BackgroundColor backgroundColorRGB(int r, int g, int b) =>
+    new BackgroundColor.rgb(r, g, b);
+
+BackgroundColor backgroundColorRGBA(int r, int g, int b, num a) =>
+    new BackgroundColor.rgba(r, g, b, a);
+
+class Color extends StyleItem {
+  final String color;
+
+  Color(this.color);
+
+  factory Color.rgb(int r, int g, int b) => new Color('rgb($r, $g, $b)');
+
+  factory Color.rgba(int r, int g, int b, num a) =>
+      new Color('rgba($r, $g, $b, $a)');
+
+  String get style => 'color';
+
+  String get value => color;
+}
+
+Color color(String color) => new Color(color);
+
+Color colorRGB(int r, int g, int b) => new Color.rgb(r, g, b);
+
+Color colorRGBA(int r, int g, int b, num a) => new Color.rgba(r, g, b, a);
+
+class BackgroundImage extends StyleItem {
+  final String image;
+
+  BackgroundImage(this.image);
+
+  String get style => 'background-image';
+
+  String get value => image;
+}
+
+BackgroundImage backgroundImage(String image) => new BackgroundImage(image);
+
+BackgroundImage backgroundImageUrl(String image) =>
+    new BackgroundImage('url($image)');
+
+class Width extends StyleItem {
+  final num width;
+
+  final String unit;
+
+  Width(this.width, [this.unit]);
+
+  String get style => 'width';
+
+  String get value {
+    String ret = width.toString();
+    if (unit is String) ret += unit;
     return ret;
-  }
-
-  operator []=(String key, String value) => _styles[key] = value;
-
-  final _styles = <String, String>{};
-
-  String _backgroundColor;
-
-  set backgroundColor(String value) {
-    _backgroundColor = value;
-  }
-
-  String get backgroundColor => _backgroundColor;
-
-  String _color;
-
-  set color(String value) {
-    _color = value;
-  }
-
-  String get color => _color;
-
-  String _backgroundImage;
-
-  set backgroundImage(String value) => _backgroundImage = value;
-
-  String get backgroundImage => _backgroundImage;
-
-  String _backgroundRepeat;
-
-  set backgroundRepeat(String value) => _backgroundRepeat = value;
-
-  String get backgroundRepeat => _backgroundRepeat;
-
-  String _backgroundPosition;
-
-  set backgroundPosition(String value) => _backgroundPosition = value;
-
-  String get backgroundPosition => _backgroundPosition;
-
-
-
-  String _width;
-
-  set width(String value) => _width = value;
-
-  set widthPx(int value) => width = '${value}px';
-
-  String get width => _width;
-
-  String _height;
-
-  set height(String value) => _height = value;
-
-  set heightPx(int value) => _height = '${value}px';
-
-  String get height => _height;
-
-  setSize(int widthPx, int heightPx) {
-    this.widthPx = widthPx;
-    this.heightPx = heightPx;
-  }
-
-  final _transitions = <String>[];
-
-  void addTransition(String property, num duration, {num delay, String timing}) {
-    StringBuffer sb = new StringBuffer();
-    sb.write('$property ${duration}s');
-    if(timing is String) {
-      sb.write(' $timing');
-    }
-    if(delay is num) {
-      sb.write(' ${delay}s');
-    }
-    _transitions.add(sb.toString());
-  }
-
-  void add(String key, String value) {
-    if(key is! String || key.isEmpty) return;
-    _styles[key] = value;
-  }
-
-  void addAll(Map<String, String> values) {
-    values.forEach(add);
-  }
-
-  String styleCss() {
-    StringBuffer sb = new StringBuffer();
-    final css = items;
-    for(String style in css.keys) {
-      sb.write(style);
-      sb.write(': ');
-      sb.write(css[style]);
-      sb.write(';');
-    }
-    return sb.toString();
   }
 }
 
-class CssItem extends Object with Style {
+Width width(num width, [String unit]) => new Width(width, unit);
+
+class Height extends StyleItem {
+  final num height;
+
+  final String unit;
+
+  Height(this.height, [this.unit]);
+
+  String get style => 'height';
+
+  String get value {
+    String ret = height.toString();
+    if (unit is String) ret += unit;
+    return ret;
+  }
+}
+
+Height height(num height, [String unit]) => new Height(height, unit);
+
+class CssItem {
   String selector;
 
-  CssItem(this.selector, [Map<String, String> styles = const {}]) {
-    addAll(styles);
-  }
+  final List<StyleItem> items = <StyleItem>[];
 
-  CssItem.hover(this.selector, [Map<String, String> styles = const {}]) {
-    selector += ':hover';
-    addAll(styles);
-  }
+  void addAll(List<StyleItem> styles) => items.addAll(styles);
 
-  CssItem.active(this.selector, [Map<String, String> styles = const {}]) {
-    selector += ':active';
-    addAll(styles);
-  }
-
-  CssItem.focus(this.selector, [Map<String, String> styles = const {}]) {
-    selector += ':focus';
+  CssItem(this.selector, {List<StyleItem> styles: const []}) {
     addAll(styles);
   }
 
   String render() {
     StringBuffer sb = new StringBuffer();
-    sb.write(selector + ' ');
-    sb.writeln('{');
-    sb.writeln(styleCss());
+    sb.writeln(selector + ' {');
+    items.forEach((StyleItem item) => sb.writeln(item.render()));
     sb.writeln('}');
     return sb.toString();
   }

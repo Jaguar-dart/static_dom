@@ -8,12 +8,12 @@ void main() {
   group('A group of tests', () {
     test('First Test', () {
       final data = <String>['messi.jpg', 'neymar.jpg'];
-      Div div = d().forEach<String>(
+      Div divEl = div().forEach<String>(
           data,
-          (String text) => d(classes: ['item'])
-            ..add(i('/data/img/$text', classes: ["item-img"]))
+          (String text) => div(classes: ['item'])
+            ..add(img('/data/img/$text', classes: ["item-img"]))
             ..add(t(text, classes: ["item-txt"])));
-      expect(div.render(),
+      expect(divEl.render(),
           r'''<div><div class="item"><img class="item-img" src="/data/img/messi.jpg"><div class="item-txt">messi.jpg</div></div><div class="item"><img class="item-img" src="/data/img/neymar.jpg"><div class="item-txt">neymar.jpg</div></div></div>''');
     });
   });
