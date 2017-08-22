@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Added Pre element
+
 ## 0.1.0
 
 - Removed events

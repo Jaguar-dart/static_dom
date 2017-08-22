@@ -329,6 +329,7 @@ A a(String href,
       styles: styles);
 }
 
+/// Shorthand function to create [A] element
 A hyperlink(String href, content,
     {Target target,
     String id,
@@ -348,4 +349,19 @@ A hyperlink(String href, content,
       id: id,
       classes: cs,
       styles: styles);
+}
+
+/// Shorthand function to create [Pre] dom element
+Pre pre(String text,
+    {String id,
+    Iterable<String> classes,
+    Iterable<StyleItem> styles,
+    Map<String, bool> classIf}) {
+  final Set<String> cs = new Set<String>();
+  if (classes != null) cs.addAll(classes);
+  if (classIf != null)
+    classIf.forEach((String c, bool t) {
+      if (t) cs.add(c);
+    });
+  return new Pre(text, id: id, classes: cs, styles: styles);
 }

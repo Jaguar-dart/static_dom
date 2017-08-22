@@ -3,8 +3,6 @@ part of static_dom.dom;
 class Div extends DomMixin {
   final List<Dom> children = <Dom>[];
 
-  final List<StyleItem> style = <StyleItem>[];
-
   Div(
       {List<Dom> children,
       String id,
@@ -75,12 +73,32 @@ class Div extends DomMixin {
   @override
   String render() {
     StringBuffer sb = new StringBuffer();
-    sb.write(_makeTag('div', id, classes, style));
+    sb.write(_makeTag('div', id, classes, styles));
     sb.write('>');
     for (Dom child in children) {
       sb.write(child.render());
     }
     sb.write(r'</div>');
+    return sb.toString();
+  }
+}
+
+class Pre extends DomMixin {
+  final String text;
+
+  final List<StyleItem> style = <StyleItem>[];
+
+  Pre(this.text,
+      {String id, Iterable<String> classes, Iterable<StyleItem> styles})
+      : super(id: id, classes: classes, styles: styles);
+
+  @override
+  String render() {
+    StringBuffer sb = new StringBuffer();
+    sb.write(_makeTag('pre', id, classes, style));
+    sb.write('>');
+    sb.write(text);
+    sb.write(r'</pre>');
     return sb.toString();
   }
 }
