@@ -1,12 +1,6 @@
 part of static_dom.dom;
 
-class Image implements DomItem {
-  String id;
-
-  final classes = new Set<String>();
-
-  final Style style;
-
+class Image extends DomMixin {
   String src;
 
   int width;
@@ -14,29 +8,17 @@ class Image implements DomItem {
   int height;
 
   Image(this.src,
-      {this.id,
-      List<String> classes,
-      Style styles,
+      {String id,
+      Iterable<String> classes,
+      Iterable<StyleItem> styles,
       this.width,
-      this.height,
-      this.onclick})
-      : style = styles ?? new Style() {
-    if (classes != null && classes.length > 0) {
-      this.classes.addAll(classes);
-    }
-  }
-
-  Function onclick;
-
-  Image onClick(Function func) {
-    onclick = func;
-    return this;
-  }
+      this.height})
+      : super(id: id, classes: classes, styles: styles);
 
   @override
   String render() {
     StringBuffer sb = new StringBuffer();
-    sb.write(_makeTag('img', id, classes, style));
+    sb.write(_makeTag('img', id, classes, styles));
     sb.write(' src="$src"');
     if (width is int) sb.write(' width="$width"');
     if (height is int) sb.write(' height="$height"');

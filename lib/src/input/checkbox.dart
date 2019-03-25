@@ -1,12 +1,6 @@
 part of static_dom.dom;
 
-class Checkbox implements DomItem {
-  String id;
-
-  final classes = new Set<String>();
-
-  final Style style;
-
+class Checkbox extends DomMixin {
   /// Sets whether a checkbox should automatically get focus when the page loads
   bool autofocus = false;
 
@@ -29,9 +23,9 @@ class Checkbox implements DomItem {
   String value;
 
   Checkbox(
-      {this.id,
-      List<String> classes,
-      Style styles,
+      {String id,
+      Iterable<String> classes,
+      Iterable<StyleItem> styles,
       this.autofocus: false,
       this.checked: false,
       this.disabled: false,
@@ -39,11 +33,7 @@ class Checkbox implements DomItem {
       this.name,
       this.required: false,
       this.value})
-      : style = styles ?? new Style() {
-    if (classes != null && classes.length > 0) {
-      this.classes.addAll(classes);
-    }
-  }
+      : super(id: id, classes: classes, styles: styles);
 
   Checkbox setAutofocus([bool value = true]) {
     autofocus = value;
@@ -68,7 +58,7 @@ class Checkbox implements DomItem {
   @override
   String render() {
     StringBuffer sb = new StringBuffer();
-    sb.write(_makeTag('input', id, classes, style));
+    sb.write(_makeTag('input', id, classes, styles));
     sb.write(' type="checkbox"');
     if (autofocus) sb.write(' autofocus');
     if (checked) sb.write(' checked');

@@ -1,34 +1,17 @@
 part of static_dom.dom;
 
-class Div implements DomItem {
-  String id;
-
-  final classes = new Set<String>();
-
-  final children = <DomItem>[];
-
-  final Style style;
+class Div extends DomMixin {
+  final List<Dom> children = <Dom>[];
 
   Div(
-      {List<DomItem> child,
-      this.id,
-      List<String> classes,
-      Style styles,
-      this.onclick})
-      : style = styles ?? new Style() {
-    if (child != null && child.length > 0) {
-      children.addAll(child);
+      {List<Dom> children,
+      String id,
+      Iterable<String> classes,
+      Iterable<StyleItem> styles})
+      : super(id: id, classes: classes, styles: styles) {
+    if (children != null && children.length > 0) {
+      this.children.addAll(children);
     }
-    if (classes != null && classes.length > 0) {
-      this.classes.addAll(classes);
-    }
-  }
-
-  Function onclick;
-
-  Div onClick(Function func) {
-    onclick = func;
-    return this;
   }
 
   Div add(child) {
@@ -43,8 +26,8 @@ class Div implements DomItem {
     return this;
   }
 
-  Div addD({List<DomItem> child, String id, List<String> classes}) {
-    Div item = d(child: child, id: id, classes: classes);
+  Div addD({List<Dom> child, String id, List<String> classes}) {
+    Div item = div(children: child, id: id, classes: classes);
     add(item);
     return item;
   }
@@ -57,7 +40,8 @@ class Div implements DomItem {
 
   Image addI(String src,
       {String id, List<String> classes, int width, int height}) {
-    Image item = i(src, id: id, classes: classes, width: width, height: height);
+    Image item =
+        img(src, id: id, classes: classes, width: width, height: height);
     add(item);
     return item;
   }
@@ -71,8 +55,7 @@ class Div implements DomItem {
       bool indeterminate: false,
       String name,
       bool required: false,
-      String value,
-      Function onclick}) {
+      String value}) {
     Checkbox item = c(
         id: id,
         classes: classes,
@@ -90,12 +73,32 @@ class Div implements DomItem {
   @override
   String render() {
     StringBuffer sb = new StringBuffer();
-    sb.write(_makeTag('div', id, classes, style));
+    sb.write(_makeTag('div', id, classes, styles));
     sb.write('>');
-    for (DomItem child in children) {
+    for (Dom child in children) {
       sb.write(child.render());
     }
     sb.write(r'</div>');
+    return sb.toString();
+  }
+}
+
+class Pre extends DomMixin {
+  final String text;
+
+  final List<StyleItem> style = <StyleItem>[];
+
+  Pre(this.text,
+      {String id, Iterable<String> classes, Iterable<StyleItem> styles})
+      : super(id: id, classes: classes, styles: styles);
+
+  @override
+  String render() {
+    StringBuffer sb = new StringBuffer();
+    sb.write(_makeTag('pre', id, classes, style));
+    sb.write('>');
+    sb.write(text);
+    sb.write(r'</pre>');
     return sb.toString();
   }
 }
